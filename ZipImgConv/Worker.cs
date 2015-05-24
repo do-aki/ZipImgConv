@@ -87,19 +87,17 @@ namespace ZipImgConv
                     return;
                 }
 
-                var sw = new Stopwatch();
-
                 t.Status = ConvertTarget.TargetStatus.Prosessing;
                 t.Message = String.Empty;
 
                 try
                 {
+                    var sw = new Stopwatch();
                     sw.Start();
                     if (this.convert(t, write_file, cancellationToken))
                     {
-                        t.Status = ConvertTarget.TargetStatus.Done;
                         sw.Stop();
-
+                        t.Status = ConvertTarget.TargetStatus.Done;
                         t.Message = processTimeFormat(sw.Elapsed);
                     }
                     else
@@ -113,6 +111,11 @@ namespace ZipImgConv
                 {
                     t.Status = ConvertTarget.TargetStatus.Done;
                     t.Message = "サポートされないファイル形式です";
+                }
+                catch (Exception e)
+                {
+                    t.Status = ConvertTarget.TargetStatus.Ready;
+                    t.Message = "想定外のエラーです (" + e.Message + ")";
                 }
             };
         }
@@ -169,25 +172,46 @@ namespace ZipImgConv
 
         private void convertFile(IReader reader, IWriter writer)
         {
-            var stm = reader.OpenEntryStream();
-            using (var mem = new MemoryStream())
+            using (var original = new MemoryStream())
             {
-                using (MagickImage image = new MagickImage(stm))
+                using (var stm = reader.OpenEntryStream())
                 {
-                    var g = magickGeometry;
-
-                    if ((g.Width < g.Height && image.Height < image.Width)
-                        || (g.Height < g.Width && image.Width < image.Height))
-                    {
-                        g = new MagickGeometry(g.Height, g.Width);
-                    }
-
-                    image.Quality = quality;
-                    image.Resize(g);
-                    image.Write(mem);
+                    stm.CopyTo(original);
                 }
-                mem.Seek(0, SeekOrigin.Begin);
-                writer.Write(reader.Entry.FilePath, mem);
+
+                original.Seek(0, SeekOrigin.Begin);
+                if (original.Length == 0)
+                {
+                    // empty file
+                }
+
+                try
+                {
+                    using (var resized = new MemoryStream())
+                    using (MagickImage image = new MagickImage(original))
+                    {
+                        var g = magickGeometry;
+
+                        if ((g.Width < g.Height && image.Height < image.Width)
+                            || (g.Height < g.Width && image.Width < image.Height))
+                        {
+                            g = new MagickGeometry(g.Height, g.Width);
+                        }
+
+                        image.Quality = quality;
+                        image.Resize(g);
+                        image.Write(resized);
+                        image.Dispose();
+
+                        resized.Seek(0, SeekOrigin.Begin);
+                        writer.Write(reader.Entry.FilePath, resized);
+                    }
+                }
+                catch (MagickException)
+                {
+                    original.Seek(0, SeekOrigin.Begin);
+                    writer.Write(reader.Entry.FilePath, original);
+                }
             }
         }
 
