@@ -128,10 +128,11 @@ namespace ZipImgConv
                         continue;
                     }
 
+                    convertTarget.Progress = (int)((double)converted / entry_count * 100);
+                    convertTarget.Message = string.Format("{0,4:D} / {1,4:D}", converted, entry_count);
+
                     convertFile(reader, writer);
                     ++converted;
-
-                    convertTarget.Progress = (int)((double)converted / entry_count * 100);
                 }
             }
 
