@@ -59,7 +59,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn  Width="200" Header="" DisplayMemberBinding="{Binding Error}" />
+                    <GridViewColumn  Width="200" Header="" DisplayMemberBinding="{Binding Message}" />
                 </GridView>
             </ListView.View>
         </ListView>

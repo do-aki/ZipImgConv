@@ -50,12 +50,12 @@ namespace ZipImgConv
             }
         }
 
-        private string error;
-        public string Error {
-            get { return error; }
+        private string message;
+        public string Message {
+            get { return message; }
             set
             {
-                setProperty(ref error, value);
+                setProperty(ref message, value);
             }
         }
     }

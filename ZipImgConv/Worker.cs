@@ -53,7 +53,7 @@ namespace ZipImgConv
                     var write_file = buildWriteFileName(t.FileName, fileNameTemplate);
                     if (File.Exists(write_file))
                     {
-                        t.Error = "書き込み先にファイルが存在するため中断しました";
+                        t.Message = "書き込み先にファイルが存在するため中断しました";
                         continue;
                     }
 
@@ -69,7 +69,7 @@ namespace ZipImgConv
                     var task = Task.Run(() =>
                     {
                         t.Status = ConvertTarget.TargetStatus.Prosessing;
-                        t.Error = String.Empty;
+                        t.Message = String.Empty;
 
                         try
                         {
@@ -81,13 +81,13 @@ namespace ZipImgConv
                             {
                                 this.cleanUp(write_file);
                                 t.Status = ConvertTarget.TargetStatus.Ready;
-                                t.Error = "中断されました";
+                                t.Message = "中断されました";
                             }
                         }
                         catch (InvalidOperationException)
                         {
                             t.Status = ConvertTarget.TargetStatus.Done;
-                            t.Error = "サポートされないファイル形式です";
+                            t.Message = "サポートされないファイル形式です";
                         }
                         semaphore.Release();
                     });
