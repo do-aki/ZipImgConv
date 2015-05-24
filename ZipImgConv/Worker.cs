@@ -56,7 +56,7 @@ namespace ZipImgConv
 
                     try
                     {
-                        await semaphore.WaitAsync(cancellationToken);
+                        await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
                     }
                     catch (OperationCanceledException)
                     {
@@ -70,7 +70,7 @@ namespace ZipImgConv
                     tasks.Add(task);
                 }
 
-                await Task.WhenAll(tasks);
+                await Task.WhenAll(tasks).ConfigureAwait(false);
             }
         }
 
