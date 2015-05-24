@@ -68,8 +68,29 @@ namespace ZipImgConv
             }
 
             var convert_list = this.DataContext as ConvertTargetList;
-            foreach (var file in files) {
+
+            foreach (var file in this.expandDirectory(files))
+            {
                 convert_list.Add(new ConvertTarget() { FileName = file });
+            }
+        }
+
+        private IEnumerable<string> expandDirectory(string[] files)
+        {
+            foreach (var file in files)
+            {
+                if (Directory.Exists(file))
+                {
+                    var dinfo = new DirectoryInfo(file);
+                    foreach (var finfo in dinfo.EnumerateFiles("*", SearchOption.AllDirectories))
+                    {
+                        yield return finfo.FullName;
+                    }
+                }
+                else if (File.Exists(file))
+                {
+                    yield return file;
+                }
             }
         }
 
