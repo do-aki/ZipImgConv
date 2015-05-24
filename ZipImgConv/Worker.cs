@@ -44,17 +44,10 @@ namespace ZipImgConv
             {
                 var tasks = new List<Task>();
 
-                foreach (var t in convertTargetList)
+                foreach (var target in convertTargetList)
                 {
-                    if (t.Status == ConvertTarget.TargetStatus.Done)
+                    if (target.Status == ConvertTarget.TargetStatus.Done)
                     {
-                        continue;
-                    }
-
-                    var write_file = buildWriteFileName(t.FileName, fileNameTemplate);
-                    if (File.Exists(write_file))
-                    {
-                        t.Message = "書き込み先にファイルが存在するため中断しました";
                         continue;
                     }
 
@@ -67,43 +60,56 @@ namespace ZipImgConv
                         break;
                     }
 
-                    var task = Task.Run(() =>
-                    {
-                        var sw = new Stopwatch();
-                        
+                    var task = Task.Run(
+                        _convert(target, cancellationToken)
+                    ).ContinueWith(_t => semaphore.Release());
 
-                        t.Status = ConvertTarget.TargetStatus.Prosessing;
-                        t.Message = String.Empty;
-
-                        try
-                        {
-                            sw.Start();
-                            if (this.convert(t, write_file, cancellationToken))
-                            {
-                                t.Status = ConvertTarget.TargetStatus.Done;
-                                sw.Stop();
-
-                                t.Message = processTimeFormat(sw.Elapsed);
-                            }
-                            else
-                            {
-                                this.cleanUp(write_file);
-                                t.Status = ConvertTarget.TargetStatus.Ready;
-                                t.Message = "中断されました";
-                            }
-                        }
-                        catch (InvalidOperationException)
-                        {
-                            t.Status = ConvertTarget.TargetStatus.Done;
-                            t.Message = "サポートされないファイル形式です";
-                        }
-                        semaphore.Release();
-                    });
                     tasks.Add(task);
                 }
 
                 await Task.WhenAll(tasks);
             }
+        }
+
+        private Action _convert(ConvertTarget t, CancellationToken cancellationToken)
+        {
+            return () =>
+            {
+                var write_file = buildWriteFileName(t.FileName, fileNameTemplate);
+                if (File.Exists(write_file))
+                {
+                    t.Message = "書き込み先にファイルが存在するため中断しました";
+                    return;
+                }
+
+                var sw = new Stopwatch();
+
+                t.Status = ConvertTarget.TargetStatus.Prosessing;
+                t.Message = String.Empty;
+
+                try
+                {
+                    sw.Start();
+                    if (this.convert(t, write_file, cancellationToken))
+                    {
+                        t.Status = ConvertTarget.TargetStatus.Done;
+                        sw.Stop();
+
+                        t.Message = processTimeFormat(sw.Elapsed);
+                    }
+                    else
+                    {
+                        this.cleanUp(write_file);
+                        t.Status = ConvertTarget.TargetStatus.Ready;
+                        t.Message = "中断されました";
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    t.Status = ConvertTarget.TargetStatus.Done;
+                    t.Message = "サポートされないファイル形式です";
+                }
+            };
         }
 
         private string processTimeFormat(TimeSpan ts)
