@@ -4,6 +4,7 @@ using SharpCompress.Reader;
 using SharpCompress.Writer;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -68,14 +69,21 @@ namespace ZipImgConv
 
                     var task = Task.Run(() =>
                     {
+                        var sw = new Stopwatch();
+                        
+
                         t.Status = ConvertTarget.TargetStatus.Prosessing;
                         t.Message = String.Empty;
 
                         try
                         {
+                            sw.Start();
                             if (this.convert(t, write_file, cancellationToken))
                             {
                                 t.Status = ConvertTarget.TargetStatus.Done;
+                                sw.Stop();
+
+                                t.Message = processTimeFormat(sw.Elapsed);
                             }
                             else
                             {
@@ -96,6 +104,15 @@ namespace ZipImgConv
 
                 await Task.WhenAll(tasks);
             }
+        }
+
+        private string processTimeFormat(TimeSpan ts)
+        {
+            return String.Format(
+                "{0:00}:{1:00}",
+                Math.Floor(ts.TotalMinutes), 
+                ts.Seconds
+            );
         }
 
         private void cleanUp(string write_file)
