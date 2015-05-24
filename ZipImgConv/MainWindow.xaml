@@ -34,7 +34,9 @@
                 <Button Click="Setting_Button_Click" Content="設定" Height="50" VerticalAlignment="Top" Width="75" />
             </ToolBar>
         </ToolBarTray>
-        <StatusBar DockPanel.Dock="Bottom" Height="20"/>
+        <StatusBar DockPanel.Dock="Bottom" Height="20">
+            <TextBlock Text="{Binding Count}"></TextBlock>
+        </StatusBar>
 
         <ListView x:Name="TargetListView" Margin="0" SelectionMode="Extended" AllowDrop="True" ItemsSource="{Binding}">
             <ListView.ContextMenu>
