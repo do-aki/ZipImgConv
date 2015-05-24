@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ZipImgConv
@@ -27,6 +28,15 @@ namespace ZipImgConv
                 }
                 setProperty(ref concurrency, value);
             }
+        }
+
+        private ThreadPriority priority = ThreadPriority.Normal;
+
+        [DataMember]
+        public ThreadPriority Priority
+        {
+            get { return priority; }
+            set { setProperty(ref priority, value); }
         }
 
         private int width = 600;
@@ -86,6 +96,7 @@ namespace ZipImgConv
             this.fileNameTemplate = settings.fileNameTemplate;
             this.compressionLevel = settings.compressionLevel;
             this.concurrency = settings.concurrency;
+            this.priority = settings.priority;
         }
 
         public void WriteAsJson(Stream stream)
@@ -101,7 +112,15 @@ namespace ZipImgConv
                 this.WriteAsJson(f);
             }
         }
-        
+
+        public Array PriorityList
+        {
+            get
+            {
+                return Enum.GetValues(typeof(ThreadPriority));
+            }
+        }
+
         public Array CompressionLevelList
         {
             get

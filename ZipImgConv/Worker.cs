@@ -21,6 +21,7 @@ namespace ZipImgConv
         private string fileNameTemplate;
         private ConvertTargetList convertTargetList;
         private int concurrency;
+        private ThreadPriority priority;
 
         public Worker(ConvertTargetList convertTargetList, Settings settings) 
         {
@@ -34,6 +35,7 @@ namespace ZipImgConv
             fileNameTemplate = settings.FileNameTemplate;
 
             concurrency = settings.Concurrency;
+            priority = settings.Priority;
 
             this.convertTargetList = convertTargetList;
         }
@@ -76,6 +78,8 @@ namespace ZipImgConv
         {
             return () =>
             {
+                Thread.CurrentThread.Priority = priority;
+
                 var write_file = buildWriteFileName(t.FileName, fileNameTemplate);
                 if (File.Exists(write_file))
                 {
