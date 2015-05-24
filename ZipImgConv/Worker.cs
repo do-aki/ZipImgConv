@@ -44,8 +44,9 @@ namespace ZipImgConv
             {
                 var tasks = new List<Task>();
 
-                foreach (var target in convertTargetList)
+                for (var i = 0; i < convertTargetList.Count; ++i)
                 {
+                    var target = convertTargetList[i];
                     if (target.Status == ConvertTarget.TargetStatus.Done)
                     {
                         continue;
