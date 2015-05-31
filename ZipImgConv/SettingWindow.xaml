@@ -11,7 +11,7 @@
                 </WrapPanel>
                 <WrapPanel>
                     <TextBlock Text="優先度" Margin="5,5,29,5"></TextBlock>
-                    <ComboBox Width="100" Margin="5,5,10,5" ItemsSource="{Binding PriorityList}" SelectedItem="{Binding Priority}"/>
+                    <ComboBox Width="120" Margin="5,5,10,5" ItemsSource="{Binding PriorityList}" SelectedItem="{Binding Priority}"/>
                 </WrapPanel>
             </StackPanel>
         </GroupBox>
