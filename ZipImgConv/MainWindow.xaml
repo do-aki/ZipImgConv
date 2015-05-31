@@ -12,6 +12,8 @@
         <winput:RoutedCommand x:Key="ConvertCommand" />
         <winput:RoutedCommand x:Key="ConvertCancelCommand" />
         <winput:RoutedCommand x:Key="SelectionDeleteCommand" />
+        <winput:RoutedCommand x:Key="ClearDoneCommand" />
+        <winput:RoutedCommand x:Key="ClearCommand" />
     </Window.Resources>
     <Window.DataContext>
         <local:ConvertTargetList />
@@ -20,6 +22,8 @@
         <CommandBinding Command="{StaticResource ConvertCommand}" Executed="Convert_Executed" CanExecute="Convert_CanExecute" />
         <CommandBinding Command="{StaticResource ConvertCancelCommand}" Executed="ConvertCancel_Executed" CanExecute="ConvertCancel_CanExecute"  />
         <CommandBinding Command="{StaticResource SelectionDeleteCommand}" Executed="SelectionDelete_Executed" CanExecute="SelectionDelete_CanExecute" />
+        <CommandBinding Command="{StaticResource ClearDoneCommand}" Executed="ClearDone_Executed" CanExecute="ClearDone_CanExecute" />
+        <CommandBinding Command="{StaticResource ClearCommand}" Executed="Clear_Executed" CanExecute="Clear_CanExecute" />
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Key="F5" Command="{StaticResource ConvertCommand}" />
@@ -42,8 +46,8 @@
             <ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="選択中の項目を削除" Command="{StaticResource SelectionDeleteCommand}" />
-                    <MenuItem Header="処理済みを削除"/>
-                    <MenuItem Header="すべて削除"/>
+                    <MenuItem Header="処理済みを削除" Command="{StaticResource ClearDoneCommand}"/>
+                    <MenuItem Header="すべて削除" Command="{StaticResource ClearCommand}"/>
                 </ContextMenu>
             </ListView.ContextMenu>
             <ListView.View>

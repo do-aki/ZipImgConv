@@ -158,5 +158,28 @@ namespace ZipImgConv
                 convert_list.Remove(i as ConvertTarget);
             }
         }
+
+        private void ClearDone_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !IsConvertPorcessing;
+        }
+
+        private void ClearDone_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            var convert_list = this.DataContext as ConvertTargetList;
+            convert_list.ClearDone();
+        }
+
+        private void Clear_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !IsConvertPorcessing;
+        }
+
+        private void Clear_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            var convert_list = this.DataContext as ConvertTargetList;
+            convert_list.Clear();
+        }
+
     }
 }

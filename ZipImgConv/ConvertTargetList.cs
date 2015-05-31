@@ -9,6 +9,17 @@ namespace ZipImgConv
 {
     public class ConvertTargetList : ObservableCollection<ConvertTarget>
     {
+        public void ClearDone()
+        {
+            for (int i = this.Count - 1; i >= 0; i--)
+            {
+                if (this[i].Status == ConvertTarget.TargetStatus.Done)
+                {
+                    this.RemoveAt(i);
+                }
+            }
+        }
+
         protected override void InsertItem(int index, ConvertTarget item)
         {
             if (detectSame(item))
