@@ -112,6 +112,11 @@ namespace ZipImgConv
                     t.Status = ConvertTarget.TargetStatus.Done;
                     t.Message = "サポートされないファイル形式です";
                 }
+                catch (FileNotFoundException)
+                {
+                    t.Status = ConvertTarget.TargetStatus.Ready;
+                    t.Message = "ファイルが見つかりませんでした";
+                }
                 catch (Exception e)
                 {
                     t.Status = ConvertTarget.TargetStatus.Ready;
