@@ -146,7 +146,9 @@ namespace ZipImgConv
         {
             int entry_count = countEntry(convertTarget.FileName);
 
-            using (var wstream = File.OpenWrite(write_file))
+            var tmp_file = Path.GetTempFileName();
+
+            using (var wstream = File.OpenWrite(tmp_file))
             using (var writer = WriterFactory.Open(wstream, SharpCompress.Common.ArchiveType.Zip, compressionInfo))
             using (var rstream = File.OpenRead(convertTarget.FileName))
             using (var reader = ReaderFactory.Open(rstream))
@@ -171,6 +173,8 @@ namespace ZipImgConv
                     ++converted;
                 }
             }
+
+            File.Move(tmp_file, write_file);
 
             return true;
         }
