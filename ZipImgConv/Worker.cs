@@ -156,6 +156,10 @@ namespace ZipImgConv
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
+                        writer.Dispose();
+                        wstream.Dispose();
+                        File.Delete(tmp_file);
+
                         return false;
                     }
 
