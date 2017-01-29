@@ -203,13 +203,17 @@ namespace ZipImgConv
                             g = new MagickGeometry(g.Height, g.Width);
                         }
 
+                        image.Format = MagickFormat.Jpg;
                         image.Quality = quality;
                         image.Resize(g);
                         image.Write(resized);
                         image.Dispose();
 
                         resized.Seek(0, SeekOrigin.Begin);
-                        writer.Write(reader.Entry.FilePath, resized);
+                        writer.Write(
+                            Path.ChangeExtension(reader.Entry.FilePath, "jpg"),
+                            resized
+                        );
                     }
                 }
                 catch (MagickException)
