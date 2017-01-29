@@ -1,7 +1,8 @@
 ﻿using ImageMagick;
 using SharpCompress.Common;
-using SharpCompress.Reader;
-using SharpCompress.Writer;
+using SharpCompress.Readers;
+using SharpCompress.Writers;
+using SharpCompress.Writers.Zip;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +16,7 @@ namespace ZipImgConv
 {
     public class Worker
     {
-        private CompressionInfo compressionInfo;
+        private ZipWriterOptions compressionInfo;
         private MagickGeometry magickGeometry;
         private int quality;
         private string fileNameTemplate;
@@ -25,8 +26,7 @@ namespace ZipImgConv
 
         public Worker(ConvertTargetList convertTargetList, Settings settings) 
         {
-            compressionInfo = new CompressionInfo();
-            compressionInfo.Type = SharpCompress.Common.CompressionType.Deflate;
+            compressionInfo = new ZipWriterOptions(CompressionType.Deflate);
             compressionInfo.DeflateCompressionLevel = settings.CompressionLevel;
 
             magickGeometry = new MagickGeometry(settings.Width, settings.Height);
@@ -215,7 +215,7 @@ namespace ZipImgConv
 
                         resized.Seek(0, SeekOrigin.Begin);
                         writer.Write(
-                            Path.ChangeExtension(reader.Entry.FilePath, "jpg"),
+                            Path.ChangeExtension(reader.Entry.Key, "jpg"),
                             resized
                         );
                     }
@@ -223,7 +223,7 @@ namespace ZipImgConv
                 catch (MagickException)
                 {
                     original.Seek(0, SeekOrigin.Begin);
-                    writer.Write(reader.Entry.FilePath, original);
+                    writer.Write(reader.Entry.Key, original);
                 }
             }
         }

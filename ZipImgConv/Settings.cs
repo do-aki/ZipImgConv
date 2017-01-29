@@ -1,4 +1,4 @@
-﻿using SharpCompress.Compressor.Deflate;
+﻿using SharpCompress.Compressors.Deflate;
 using System;
 using System.Collections.Generic;
 using System.IO;
